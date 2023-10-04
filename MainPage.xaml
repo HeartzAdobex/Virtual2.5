@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CalMall.MainPage">
+    
+    <VerticalStackLayout  Margin="0,150,0,0">
+        <Label Text="กรณีที่ 1" HorizontalOptions="Center"/>
+        <Button Text="หนาแน่นน้อยจอดรถภายนอกทั้งหมด" Clicked="Button_Clicked" VerticalOptions="Center" Margin="50"/>
+        <Label Text="กรณีที่ 2" HorizontalOptions="Center"/>
+        <Button Text="หนาแน่นปานกลางจอดรถใต้ตึก 80%" Clicked="Button_Clicked_1" VerticalOptions="Center" Margin="50" />
+        <Label Text="กรณีที่ 3" HorizontalOptions="Center"/>
+        <Button Text="หนาแน่นปานกลางจอดรถใต้ตึก 100 %" Clicked="Button_Clicked_2" VerticalOptions="Center" Margin="50"/>
+    </VerticalStackLayout>
+</ContentPage>
