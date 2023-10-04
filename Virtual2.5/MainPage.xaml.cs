@@ -16,9 +16,9 @@ namespace Virtual2._5
         void absoluteLayout_SizeChanged(object sender, EventArgs e)
         {
             /*center = new Microsoft.Maui.Graphics.Point(absoluteLayout.Width / 2, absoluteLayout.Height / 2);
-            radius = Math.Min(absoluteLayout.Width, absoluteLayout.Height) / 2;
             AbsoluteLayout.SetLayoutBounds(image, new Rectangle(center.X - image.Width / 2),center.Y - radius,
             AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));*/
+            radius = Math.Min(absoluteLayout.Width, absoluteLayout.Height) / 2;
         }
 
         async void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
