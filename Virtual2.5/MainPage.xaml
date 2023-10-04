@@ -4,8 +4,8 @@
              x:Class="Virtual2._5.MainPage"
              NavigationPage.HasNavigationBar="False">
 
-    <ScrollView Orientation="Both">
-        <AbsoluteLayout x:Name="absoluteLayout"
+    <ScrollView>
+        <!--<AbsoluteLayout x:Name="absoluteLayout"
                 SizeChanged="absoluteLayout_SizeChanged">
                 <Image x:Name="image" Source="chair.png"
                        SizeChanged="absoluteLayout_SizeChanged"
@@ -16,10 +16,10 @@
                     </Image.GestureRecognizers>
                 </Image>
 
-        </AbsoluteLayout>
+        </AbsoluteLayout>-->
 
 
-            <!--<StackLayout
+        <StackLayout
                 BackgroundColor="BurlyWood">
             <Image
                 Source="dotnet_bot.png"
@@ -31,11 +31,12 @@
 
             <Button
                 x:Name="Addimg"
+                Clicked="Addimg_Clicked"
                 Text="Add Image"
                 HorizontalOptions="Start"
                 Margin="8,0,0,8"
             />
-        </StackLayout>-->
+        </StackLayout>
     </ScrollView>
 
 </ContentPage>
