@@ -40,6 +40,7 @@ namespace Virtual2._5
                     using Stream sourceStream = await myPhoto.OpenReadAsync();
                     using FileStream localFileStream = File.OpenWrite(localFilePath);
                     await sourceStream.CopyToAsync(localFileStream);
+                    await DisplayAlert("Alert", localFileStream.Name, "Ok");
                 }
             }
             else
