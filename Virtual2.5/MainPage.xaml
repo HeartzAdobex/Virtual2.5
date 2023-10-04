@@ -6,36 +6,46 @@
 
     <ScrollView>
         <!--<AbsoluteLayout x:Name="absoluteLayout"
-                SizeChanged="absoluteLayout_SizeChanged">
+                            SizeChanged="absoluteLayout_SizeChanged">
                 <Image x:Name="image" Source="chair.png"
-                       SizeChanged="absoluteLayout_SizeChanged"
-                       MaximumHeightRequest="500"
-                       MaximumWidthRequest="400">
+               SizeChanged="absoluteLayout_SizeChanged"
+               MaximumHeightRequest="500"
+               MaximumWidthRequest="400">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
                     </Image.GestureRecognizers>
                 </Image>
+            </AbsoluteLayout>-->
 
-        </AbsoluteLayout>-->
+
+
 
 
         <StackLayout
-                BackgroundColor="BurlyWood">
+                    BackgroundColor="BurlyWood">
             <Image
-                Source="dotnet_bot.png"
-                HeightRequest="200"
-                HorizontalOptions="Center"
-                VerticalOptions="CenterAndExpand"
-            />
+                    x:Name="resultImage"
+                    Source="dotnet_bot.png"
+                    HeightRequest="200"
+                    HorizontalOptions="Center"
+                    VerticalOptions="CenterAndExpand"
+                />
 
+            <HorizontalStackLayout>
+                <Button
+                    x:Name="Addimg"
+                    Clicked="Addimg_Clicked"
+                    Text="Add Image"
+                    HorizontalOptions="Start"
+                    Margin="10,0,0,8"/>
+                <Button
+                    x:Name="TakePhoto"
+                    Clicked="TakePhoto_Clicked"
+                    Text="Take Photo"
+                    HorizontalOptions="Start"
+                    Margin="35,0,0,8"/>
+            </HorizontalStackLayout>
 
-            <Button
-                x:Name="Addimg"
-                Clicked="Addimg_Clicked"
-                Text="Add Image"
-                HorizontalOptions="Start"
-                Margin="8,0,0,8"
-            />
         </StackLayout>
     </ScrollView>
 
