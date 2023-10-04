@@ -5,7 +5,7 @@
              Title="EquationPage">
     
     <StackLayout>
-        <Label Text="ใส่จำนวนพื้นที่ที่ดิน:" />
+        <Label Text="ใส่จำนวนพื้นที่ที่ดิน: " />
         <Entry x:Name="NumberEntry" Placeholder="0" Keyboard="Numeric"/>
         <Button Text="Calculate" Clicked="Button_Clicked" />
     </StackLayout>
