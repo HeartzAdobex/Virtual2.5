@@ -4,34 +4,25 @@
              x:Class="Virtual2._5.MainPage"
              NavigationPage.HasNavigationBar="False">
 
-    <ScrollView>
-        <!--<AbsoluteLayout x:Name="absoluteLayout"
-                            SizeChanged="absoluteLayout_SizeChanged">
-                <Image x:Name="image" Source="chair.png"
-               SizeChanged="absoluteLayout_SizeChanged"
-               MaximumHeightRequest="500"
-               MaximumWidthRequest="400">
-                    <Image.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
-                    </Image.GestureRecognizers>
-                </Image>
-            </AbsoluteLayout>-->
+    <StackLayout BackgroundColor="BurlyWood">
 
-
-
-
-
-        <StackLayout
-                    BackgroundColor="BurlyWood">
-            <Image
+        <Grid Margin="50,250,50,0"
+              BackgroundColor="AliceBlue">
+            <Grid.GestureRecognizers>
+                <PinchGestureRecognizer PinchUpdated="PinchGestureRecognizer_PinchUpdated"/>
+            </Grid.GestureRecognizers>
+                <Image
                     x:Name="resultImage"
                     Source="dotnet_bot.png"
-                    HeightRequest="200"
+                    HeightRequest="300"
                     HorizontalOptions="Center"
-                    VerticalOptions="CenterAndExpand"
-                />
+                    VerticalOptions="CenterAndExpand"/>
+            </Grid>
 
-            <HorizontalStackLayout>
+        <HorizontalStackLayout
+                VerticalOptions="EndAndExpand"
+                Margin="0,0,0,8"
+                >
                 <Button
                     x:Name="Addimg"
                     Clicked="Addimg_Clicked"
@@ -47,6 +38,5 @@
             </HorizontalStackLayout>
 
         </StackLayout>
-    </ScrollView>
 
 </ContentPage>
