@@ -6,7 +6,8 @@
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new MainPage());
+            MainPage = new View.CodeByAut();
+                //new NavigationPage(new MainPage());
         }
     }
 }
