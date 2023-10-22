@@ -6,37 +6,41 @@
 
     <StackLayout BackgroundColor="BurlyWood">
 
-        <Grid Margin="50,250,50,0"
-              BackgroundColor="AliceBlue">
-            <Grid.GestureRecognizers>
-                <PinchGestureRecognizer PinchUpdated="PinchGestureRecognizer_PinchUpdated"/>
-            </Grid.GestureRecognizers>
-                <Image
-                    x:Name="resultImage"
-                    Source="dotnet_bot.png"
-                    HeightRequest="300"
-                    HorizontalOptions="Center"
-                    VerticalOptions="CenterAndExpand"/>
-            </Grid>
+        <Grid x:Name="MainLayout" RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <HorizontalStackLayout
-                VerticalOptions="EndAndExpand"
-                Margin="0,0,0,8"
-                >
-                <Button
-                    x:Name="Addimg"
-                    Clicked="Addimg_Clicked"
-                    Text="Add Image"
-                    HorizontalOptions="Start"
-                    Margin="10,0,0,8"/>
-                <Button
-                    x:Name="TakePhoto"
-                    Clicked="TakePhoto_Clicked"
-                    Text="Take Photo"
-                    HorizontalOptions="Start"
-                    Margin="35,0,0,8"/>
-            </HorizontalStackLayout>
+            <AbsoluteLayout>
+                <Image x:Name="BackgroundImage"
+                Aspect="Fill"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand"
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+                AbsoluteLayout.LayoutFlags="All"/>
 
-        </StackLayout>
+                <Slider x:Name="ResizeSlider"
+            Minimum="0.5"
+            Maximum="3"
+            Value="1"
+            Grid.Row="1"
+            IsVisible="False"
+            IsEnabled="True"
+            VerticalOptions="CenterAndExpand"
+            HorizontalOptions="CenterAndExpand"
+            ValueChanged="ResizeSlider_ValueChanged"/>
+
+                <StackLayout Orientation="Horizontal" Grid.Row="2" HorizontalOptions="FillAndExpand">
+                    <Button Text="Pick" Clicked="OnPickImageClicked" HorizontalOptions="FillAndExpand" Margin="50,10,10,0"/>
+                    <Button Text="Set Background" Clicked="OnSetBackgroundClicked" HorizontalOptions="FillAndExpand" Margin="10,10,10,0"/>
+                    <Button Text="Clear" Clicked="OnClearImagesClicked" HorizontalOptions="FillAndExpand" Margin="10,10,10,0"/>
+                    <!--<Button Text="Save" Clicked="OnSaveImageClicked" HorizontalOptions="FillAndExpand" />-->
+                </StackLayout>
+            </AbsoluteLayout>
+        </Grid>
+
+    </StackLayout>
 
 </ContentPage>
