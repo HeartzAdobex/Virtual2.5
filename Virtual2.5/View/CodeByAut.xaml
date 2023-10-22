@@ -32,10 +32,10 @@
             ValueChanged="ResizeSlider_ValueChanged"/>
 
             <StackLayout Orientation="Horizontal" Grid.Row="2" HorizontalOptions="FillAndExpand">
-                <Button Text="Set Background" Clicked="OnSetBackgroundClicked" HorizontalOptions="FillAndExpand" />
-                <Button Text="Pick" Clicked="OnPickImageClicked" HorizontalOptions="FillAndExpand" />
-                <Button Text="Clear" Clicked="OnClearImagesClicked" HorizontalOptions="FillAndExpand" />
-                <Button Text="Save" Clicked="OnSaveImageClicked" HorizontalOptions="FillAndExpand" />
+                <Button Text="Pick" Clicked="OnPickImageClicked" HorizontalOptions="FillAndExpand" Margin="50,10,10,0"/>
+                <Button Text="Set Background" Clicked="OnSetBackgroundClicked" HorizontalOptions="FillAndExpand" Margin="10,10,10,0"/>
+                <Button Text="Clear" Clicked="OnClearImagesClicked" HorizontalOptions="FillAndExpand" Margin="10,10,10,0"/>
+                <!--<Button Text="Save" Clicked="OnSaveImageClicked" HorizontalOptions="FillAndExpand" />-->
             </StackLayout>
         </AbsoluteLayout>
     </Grid>
