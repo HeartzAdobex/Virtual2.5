@@ -40,9 +40,8 @@
             <Slider x:Name="SliderRotation" Minimum="0" Maximum="360" ValueChanged="SliderRotation_ValueChanged"/>
         </StackLayout>
 
-        <StackLayout Orientation="Horizontal" Grid.Row="3" HorizontalOptions="FillAndExpand">
+            <StackLayout Orientation="Horizontal" Grid.Row="2" HorizontalOptions="FillAndExpand">
                 <Button Text="Set Background" Clicked="OnSetBackgroundClicked" HorizontalOptions="FillAndExpand" />
-                <Button Text="Capture" Clicked="OnCaptureImageClicked" />
                 <Button Text="Pick" Clicked="OnPickImageClicked" HorizontalOptions="FillAndExpand" />
                 <Button Text="Clear" Clicked="OnClearImagesClicked" HorizontalOptions="FillAndExpand" />
                 <Button Text="Save" Clicked="OnSaveImageClicked" HorizontalOptions="FillAndExpand" />
