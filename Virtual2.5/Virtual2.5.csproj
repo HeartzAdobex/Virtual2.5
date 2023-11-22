@@ -62,6 +62,8 @@
 	<ItemGroup>
 		<PackageReference Include="Bertuzzi.MAUI.PinchZoomImage" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="SkiaSharp" Version="2.88.6" />
+		<PackageReference Include="SkiaSharp.Views" Version="2.88.6" />
 	</ItemGroup>
 
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionVirtual25HideInfoBar="True" /></VisualStudio></ProjectExtensions>

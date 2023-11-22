@@ -1,6 +1,8 @@
 using Microsoft.Maui.Layouts;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.PlatformConfiguration;
+using SkiaSharp;
+using SkiaSharp.Views;
 
 namespace Virtual2._5.View;
 
@@ -10,6 +12,8 @@ public partial class CodeByAut : ContentPage
     private double currentScale = 1, startScale = 1;
     private Image _selectedImage;
     private double _startX, _startY;
+    private double _sliderScale = 1.0;
+    private double _rotationScale = 1.0;
 
     public CodeByAut()
 	{
@@ -129,6 +133,7 @@ public partial class CodeByAut : ContentPage
             double scale = CalculateScaleBasedOnRotationX(e.NewValue);
             ManipulableImage.Scale = scale;
         }
+        ApplyCombinedScale();
     }
 
     private double CalculateScaleBasedOnRotationX(double rotationX)
@@ -146,22 +151,45 @@ public partial class CodeByAut : ContentPage
 
     private void SliderTranslationY_ValueChanged(object sender, ValueChangedEventArgs e)
     {
-            ManipulableImage.TranslationY = e.NewValue;
+        if (ManipulableImage != null)
+        {
+            ManipulableImage.RotationY = e.NewValue;
+
+            double scale = CalculateScaleBasedOnRotationY(e.NewValue);
+            ManipulableImage.Scale = scale;
+        }
+        ApplyCombinedScale();
     }
 
+    private double CalculateScaleBasedOnRotationY(double rotationY)
+    {
+        const double maxScale = 1.0;
+        const double minScale = 0.8;
+
+        double normalizedRotation = Math.Abs(rotationY % 360);
+        if (normalizedRotation > 180)
+            normalizedRotation = 360 - normalizedRotation;
+
+        double scale = maxScale - ((normalizedRotation / 180) * (maxScale - minScale));
+        return scale;
+    }
     private void SliderScale_ValueChanged(object sender, ValueChangedEventArgs e)
     {
-        ManipulableImage.Scale = e.NewValue;
+        _sliderScale = e.NewValue;
+        ApplyCombinedScale();
+    }
+
+    private void ApplyCombinedScale()
+    {
+        if (ManipulableImage != null)
+        {
+            ManipulableImage.Scale = _sliderScale * _rotationScale;
+        }
     }
 
     private void SliderRotation_ValueChanged(object sender, ValueChangedEventArgs e)
     {
         ManipulableImage.Rotation = e.NewValue;
-    }
-
-    private void OnSaveImageClicked(object sender, EventArgs e)
-    {
-        
     }
 
     private async void OnSetBackgroundClicked(object sender, EventArgs e)
@@ -177,7 +205,13 @@ public partial class CodeByAut : ContentPage
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error picking image for background: {ex.Message}");
+            Console.WriteLine($"Error picking: {ex.Message}");
         }
     }
+
+    private void OnSaveImageClicked(object sender, EventArgs e)
+    {
+
+    }
+
 }
