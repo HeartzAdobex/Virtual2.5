@@ -159,7 +159,7 @@ public partial class CodeByAut : ContentPage
         ManipulableImage.Rotation = e.NewValue;
     }
 
-    private async void OnSaveImageClicked(object sender, EventArgs e)
+    private void OnSaveImageClicked(object sender, EventArgs e)
     {
         
     }
