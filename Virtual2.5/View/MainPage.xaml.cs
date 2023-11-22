@@ -1,139 +1,178 @@
-﻿namespace Virtual2._5
+﻿using Microsoft.Maui.Controls.PlatformConfiguration;
+
+namespace Virtual2._5
 {
     public partial class MainPage : ContentPage
     {
-        double currentScale = 1;
-        double startScale = 1;
-        double xOffset = 0;
-        double yOffset = 0;
+        private List<Image> _movableImages = new List<Image>();
+        private double currentScale = 1, startScale = 1;
+        private Image _selectedImage;
 
         public MainPage()
         {
             InitializeComponent();
             PinchGestureRecognizer pinchGesture = new PinchGestureRecognizer();
-            pinchGesture.PinchUpdated += PinchGestureRecognizer_PinchUpdated;
         }
 
         //Taking photo
-        async Task TakePhotoAsync()
+        private async void OnPickImageClicked(object sender, EventArgs e)
         {
             try
             {
-                var photo = await MediaPicker.Default.CapturePhotoAsync();
-                var PhotoPath = await LoadPhotoAsync(photo);
-                await DisplayAlert("System Message", $"Capturing completed!:{PhotoPath}", "OK");
-                
-            }
-            catch (FeatureNotSupportedException fnsEx)
-            {
+                var result = await MediaPicker.PickPhotoAsync();
+                if (result != null)
+                {
+                    var stream = await result.OpenReadAsync();
+                    _selectedImage = new Image
+                    {
+                        Source = ImageSource.FromStream(() => stream),
+                        WidthRequest = 150 * ResizeSlider.Value,
+                        HeightRequest = 150 * ResizeSlider.Value,
+                        Aspect = Aspect.AspectFill
+                    };
 
-            }
-            catch (PermissionException pEx)
-            {
+                    var panGesture = new PanGestureRecognizer();
+                    panGesture.PanUpdated += OnPanUpdated;
+                    _selectedImage.GestureRecognizers.Add(panGesture);
 
+                    var pinchGesture = new PinchGestureRecognizer();
+                    pinchGesture.PinchUpdated += OnPinchUpdated;
+                    _selectedImage.GestureRecognizers.Add(pinchGesture);
+
+                    _selectedImage.GestureRecognizers.Add(new TapGestureRecognizer
+                    {
+                        Command = new Command(() =>
+                        {
+                            ResizeSlider.IsVisible = false;
+                            _selectedImage = null;
+                        }),
+                        NumberOfTapsRequired = 2
+                    });
+
+                    Grid.SetRow(_selectedImage, 0);
+                    MainLayout.Children.Add(_selectedImage);
+
+                    if (_selectedImage.Source != null)
+                    {
+                        ResizeSlider.IsVisible = true;
+                    }
+                    _selectedImage.GestureRecognizers.Add(new TapGestureRecognizer
+                    {
+                        Command = new Command(() =>
+                        {
+                            ResizeSlider.IsVisible = false;
+                        })
+                    });
+                }
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine($"Error picking image: {ex.Message}");
             }
         }
-        
-        //Loading Taken photo from storage
-        async Task<string> LoadPhotoAsync(FileResult photo)
+
+        private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
         {
-            //canceled
-            if(photo == null)
-            {
-                return "";
-            }
+            var image = sender as Image;
 
-            //save the file to storage
-            string newFilePath = Path.Combine(FileSystem.CacheDirectory, photo.FileName);
-
-            using Stream sourceStream = await photo.OpenReadAsync();
-            using FileStream fileStream = File.OpenWrite(newFilePath);
-
-            await sourceStream.CopyToAsync(fileStream); // Copy Source Stream to new
-            return newFilePath;
-        }
-
-        void absoluteLayout_SizeChanged(object sender, EventArgs e)
-        {
-            /*center = new Microsoft.Maui.Graphics.Point(absoluteLayout.Width / 2, absoluteLayout.Height / 2);
-            AbsoluteLayout.SetLayoutBounds(image, new Rectangle(center.X - image.Width / 2),center.Y - radius,
-            AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
-            radius = Math.Min(absoluteLayout.Width, absoluteLayout.Height) / 2; */
-        }
-
-        async void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
-        {
-            /*image.Rotation= 0;
-            image.AnchorY = radius / image.Height;
-            await image.RotateTo(360, 2000);*/
-        }
-
-        async void Addimg_Clicked(object sender, EventArgs e)
-        {
-            var pickResult = await FilePicker.PickAsync(new PickOptions
-            {
-                FileTypes = FilePickerFileType.Png,
-                PickerTitle = "Select your image"
-            });
-
-            if (pickResult == null)
-                return;
-            var stream = await pickResult.OpenReadAsync();
-            resultImage.Source = ImageSource.FromStream(() => stream);
-        }
-
-        async void TakePhoto_Clicked(object sender, EventArgs e)
-        {
-            TakePhotoAsync();
-        }
-
-        
-        
-        
-        
-        
-        
-        
-        private void PinchGestureRecognizer_PinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
-        {
             if (e.Status == GestureStatus.Started)
             {
-                startScale = Content.Scale;
-                Content.AnchorX = 0;
-                Content.AnchorY = 0;
+                startScale = currentScale;
             }
 
             if (e.Status == GestureStatus.Running)
             {
-                currentScale += (e.Scale - 1) * startScale;
-                currentScale = Math.Max(1, currentScale);
+                currentScale = startScale * e.Scale;
 
-                double renderedX = Content.X + xOffset;
-                double deltaX = renderedX / Width;
-                double deltaWidth = Width / (Content.Width * startScale);
-                double originX = (e.ScaleOrigin.X - deltaX) * deltaWidth;
-
-                double renderedY = Content.Y + yOffset;
-                double deltaY = renderedY / Height;
-                double deltaHeight = Height / (Content.Height * startScale);
-                double originY = (e.ScaleOrigin.Y - deltaY) * deltaHeight;
-
-                double targetX = xOffset - (originX * Content.Width) * (currentScale - startScale);
-                double targetY = xOffset - (originY * Content.Width) * (currentScale - startScale);
-
-                Content.TranslationX = Math.Clamp(targetX, -Content.Width * (currentScale - 1), 0);
-                Content.TranslationY = Math.Clamp(targetY, -Content.Width * (currentScale - 1), 0);
-
-                Content.Scale = currentScale;
+                image.Scale = currentScale;
             }
+
             if (e.Status == GestureStatus.Completed)
             {
-                xOffset = Content.TranslationX; 
-                yOffset = Content.TranslationY;
+                currentScale = image.Scale;
+            }
+        }
+
+        private double _startX, _startY;
+        private void OnPanUpdated(object sender, PanUpdatedEventArgs e)
+        {
+            var image = sender as Image;
+
+            switch (e.StatusType)
+            {
+                case GestureStatus.Started:
+                    _startX = e.TotalX;
+                    _startY = e.TotalY;
+                    break;
+
+                case GestureStatus.Running:
+                    var deltaX = e.TotalX - _startX;
+                    var deltaY = e.TotalY - _startY;
+
+                    image.TranslationX += deltaX;
+                    image.TranslationY += deltaY;
+
+                    _startX = e.TotalX;
+                    _startY = e.TotalY;
+                    break;
+            }
+        }
+
+        private void OnClearImagesClicked(object sender, EventArgs e)
+        {
+            var imagesToRemove = new List<Image>();
+
+            foreach (var child in MainLayout.Children)
+            {
+                if (child is Image && child != BackgroundImage)
+                {
+                    imagesToRemove.Add((Image)child);
+                }
+            }
+
+            foreach (var image in imagesToRemove)
+            {
+                MainLayout.Children.Remove(image);
+            }
+        }
+
+        private async void OnSaveImageClicked(object sender, EventArgs e)
+        {
+            var stream = await MainLayout.CaptureAsync();
+
+            var filename = $"CapturedImage_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.png";
+            var publicPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures).AbsolutePath;
+            var filePath = Path.Combine(publicPath, filename);
+            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                await stream.CopyToAsync(fileStream);
+            }
+
+            await DisplayAlert("Image Saved", $"Image saved as {filename} in the Pictures folder.", "OK");
+        }
+
+        private void ResizeSlider_ValueChanged(object sender, ValueChangedEventArgs e)
+        {
+            if (_selectedImage != null)
+            {
+                _selectedImage.Scale = e.NewValue;
+            }
+        }
+
+        private async void OnSetBackgroundClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var result = await MediaPicker.PickPhotoAsync();
+                if (result != null)
+                {
+                    var stream = await result.OpenReadAsync();
+                    BackgroundImage.Source = ImageSource.FromStream(() => stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error picking image for background: {ex.Message}");
             }
         }
     }
