@@ -10,34 +10,43 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <AbsoluteLayout>
+        <AbsoluteLayout x:Name="ImageContainer" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+
             <Image x:Name="BackgroundImage"
-                Aspect="Fill"
-                HorizontalOptions="FillAndExpand"
-                VerticalOptions="FillAndExpand"
-                AbsoluteLayout.LayoutBounds="0,0,1,1"
-                AbsoluteLayout.LayoutFlags="All"/>
+           Aspect="AspectFit"
+           AbsoluteLayout.LayoutBounds="0,0,1,1"
+           AbsoluteLayout.LayoutFlags="All"/>
 
-            <Slider x:Name="ResizeSlider"
-            Minimum="0.5"
-            Maximum="3"
-            Value="1"
-            Grid.Row="1"
-            IsVisible="False"
-            IsEnabled="True"
-            VerticalOptions="CenterAndExpand"
-            HorizontalOptions="CenterAndExpand"
-            ValueChanged="ResizeSlider_ValueChanged"/>
+            <Image x:Name="ManipulableImage"
+           Aspect="AspectFit"
+           WidthRequest="100"
+           HeightRequest="100"
+           AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1"
+           AbsoluteLayout.LayoutFlags="PositionProportional"/>
 
-            <StackLayout Orientation="Horizontal" Grid.Row="2" HorizontalOptions="FillAndExpand">
+        </AbsoluteLayout>
+
+        <StackLayout x:Name="SlidersStackLayout" Grid.Row="2" Orientation="Vertical" Spacing="10" Padding="10">
+            <Label Text="TranslationX"/>
+            <Slider x:Name="SliderTranslationX" Minimum="-100" Maximum="100" ValueChanged="SliderTranslationX_ValueChanged"/>
+            <Label Text="TranslationY"/>
+            <Slider x:Name="SliderTranslationY" Minimum="-100" Maximum="100" ValueChanged="SliderTranslationY_ValueChanged"/>
+            <Label Text="Scale"/>
+            <Slider x:Name="SliderScale" Minimum="0.5" Maximum="2" Value="1" ValueChanged="SliderScale_ValueChanged"/>
+            <Label Text="Rotation"/>
+            <Slider x:Name="SliderRotation" Minimum="0" Maximum="360" ValueChanged="SliderRotation_ValueChanged"/>
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal" Grid.Row="3" HorizontalOptions="FillAndExpand">
                 <Button Text="Set Background" Clicked="OnSetBackgroundClicked" HorizontalOptions="FillAndExpand" />
+                <Button Text="Capture" Clicked="OnCaptureImageClicked" />
                 <Button Text="Pick" Clicked="OnPickImageClicked" HorizontalOptions="FillAndExpand" />
                 <Button Text="Clear" Clicked="OnClearImagesClicked" HorizontalOptions="FillAndExpand" />
                 <Button Text="Save" Clicked="OnSaveImageClicked" HorizontalOptions="FillAndExpand" />
             </StackLayout>
-        </AbsoluteLayout>
     </Grid>
 
 </ContentPage>

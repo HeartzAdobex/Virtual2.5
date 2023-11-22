@@ -1,5 +1,6 @@
 using Microsoft.Maui.Layouts;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls.PlatformConfiguration;
 
 namespace Virtual2._5.View;
 
@@ -8,10 +9,15 @@ public partial class CodeByAut : ContentPage
     private List<Image> _movableImages = new List<Image>();
     private double currentScale = 1, startScale = 1;
     private Image _selectedImage;
+    private double _startX, _startY;
+
     public CodeByAut()
 	{
 		InitializeComponent();
-	}
+        var panGesture = new PanGestureRecognizer();
+        panGesture.PanUpdated += OnPanUpdated;
+        ManipulableImage.GestureRecognizers.Add(panGesture);
+    }
 
     private async void OnPickImageClicked(object sender, EventArgs e)
     {
@@ -21,51 +27,12 @@ public partial class CodeByAut : ContentPage
             if (result != null)
             {
                 var stream = await result.OpenReadAsync();
-                _selectedImage = new Image
-                {
-                    Source = ImageSource.FromStream(() => stream),
-                    WidthRequest = 150 * ResizeSlider.Value,
-                    HeightRequest = 150 * ResizeSlider.Value,
-                    Aspect = Aspect.AspectFill
-                };
-
-                var panGesture = new PanGestureRecognizer();
-                panGesture.PanUpdated += OnPanUpdated;
-                _selectedImage.GestureRecognizers.Add(panGesture);
-
-                var pinchGesture = new PinchGestureRecognizer();
-                pinchGesture.PinchUpdated += OnPinchUpdated;
-                _selectedImage.GestureRecognizers.Add(pinchGesture);
-
-                _selectedImage.GestureRecognizers.Add(new TapGestureRecognizer
-                {
-                    Command = new Command(() =>
-                    {
-                        ResizeSlider.IsVisible = false;
-                        _selectedImage = null;
-                    }),
-                    NumberOfTapsRequired = 2
-                });
-
-                Grid.SetRow(_selectedImage, 0);
-                MainLayout.Children.Add(_selectedImage);
-
-                if (_selectedImage.Source != null)
-                {
-                    ResizeSlider.IsVisible = true;
-                }
-                _selectedImage.GestureRecognizers.Add(new TapGestureRecognizer
-                {
-                    Command = new Command(() =>
-                    {
-                        ResizeSlider.IsVisible = false;
-                    })
-                });
+                ManipulableImage.Source = ImageSource.FromStream(() => stream);
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error picking image: {ex.Message}");
+           
         }
     }
 
@@ -91,70 +58,110 @@ public partial class CodeByAut : ContentPage
         }
     }
 
-    private double _startX, _startY;
+    private enum TransformMode
+    {
+        Move,
+        Scale,
+        Rotate
+    }
+
+    private TransformMode _currentMode = TransformMode.Move;
+    private Point _lastPanPoint;
+
     private void OnPanUpdated(object sender, PanUpdatedEventArgs e)
     {
-        var image = sender as Image;
+        var image = (Image)sender;
 
         switch (e.StatusType)
         {
             case GestureStatus.Started:
-                _startX = e.TotalX;
-                _startY = e.TotalY;
+                _startX = image.TranslationX;
+                _startY = image.TranslationY;
                 break;
 
             case GestureStatus.Running:
-                var deltaX = e.TotalX - _startX;
-                var deltaY = e.TotalY - _startY;
-
-                image.TranslationX += deltaX;
-                image.TranslationY += deltaY;
-
-                _startX = e.TotalX;
-                _startY = e.TotalY;
+                image.TranslationX = _startX + e.TotalX;
+                image.TranslationY = _startY + e.TotalY;
                 break;
         }
     }
 
     private void OnClearImagesClicked(object sender, EventArgs e)
     {
-        var imagesToRemove = new List<Image>();
+        ManipulableImage.Source = null;
 
-        foreach (var child in MainLayout.Children)
+        SliderTranslationX.Value = 0;
+        SliderTranslationY.Value = 0;
+        SliderScale.Value = 1;
+        SliderRotation.Value = 0;
+
+        ManipulableImage.TranslationX = 0;
+        ManipulableImage.TranslationY = 0;
+        ManipulableImage.Scale = 1;
+        ManipulableImage.Rotation = 0;
+        ManipulableImage.RotationX = 0;
+        ManipulableImage.RotationY = 0;
+    }
+
+    private async void OnCaptureImageClicked(object sender, EventArgs e)
+    {
+        try
         {
-            if (child is Image && child != BackgroundImage)
+            var photo = await MediaPicker.CapturePhotoAsync();
+            if (photo != null)
             {
-                imagesToRemove.Add((Image)child);
+                var stream = await photo.OpenReadAsync();
+                ManipulableImage.Source = ImageSource.FromStream(() => stream);
             }
         }
-
-        foreach (var image in imagesToRemove)
+        catch (Exception ex)
         {
-            MainLayout.Children.Remove(image);
+            
         }
+    }
+
+    private void SliderTranslationX_ValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        if (ManipulableImage != null)
+        {
+            ManipulableImage.RotationX = e.NewValue;
+
+            double scale = CalculateScaleBasedOnRotationX(e.NewValue);
+            ManipulableImage.Scale = scale;
+        }
+    }
+
+    private double CalculateScaleBasedOnRotationX(double rotationX)
+    {
+        const double maxScale = 1.0;
+        const double minScale = 0.8;
+
+        double normalizedRotation = Math.Abs(rotationX % 360);
+        if (normalizedRotation > 180)
+            normalizedRotation = 360 - normalizedRotation;
+
+        double scale = maxScale - ((normalizedRotation / 180) * (maxScale - minScale));
+        return scale;
+    }
+
+    private void SliderTranslationY_ValueChanged(object sender, ValueChangedEventArgs e)
+    {
+            ManipulableImage.TranslationY = e.NewValue;
+    }
+
+    private void SliderScale_ValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        ManipulableImage.Scale = e.NewValue;
+    }
+
+    private void SliderRotation_ValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        ManipulableImage.Rotation = e.NewValue;
     }
 
     private async void OnSaveImageClicked(object sender, EventArgs e)
     {
-        var stream = await MainLayout.CaptureAsync();
-
-        var filename = $"CapturedImage_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.png";
-        var publicPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures).AbsolutePath;
-        var filePath = Path.Combine(publicPath, filename);
-        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-        {
-            await stream.CopyToAsync(fileStream);
-        }
-
-        await DisplayAlert("Image Saved", $"Image saved as {filename} in the Pictures folder.", "OK");
-    }
-
-    private void ResizeSlider_ValueChanged(object sender, ValueChangedEventArgs e)
-    {
-        if (_selectedImage != null)
-        {
-            _selectedImage.Scale = e.NewValue;
-        }
+        
     }
 
     private async void OnSetBackgroundClicked(object sender, EventArgs e)
