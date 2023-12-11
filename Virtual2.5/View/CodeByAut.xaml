@@ -52,7 +52,7 @@
         </StackLayout>
 
         <StackLayout Orientation="Horizontal" Grid.Row="3" HorizontalOptions="FillAndExpand">
-            <Button Text="Set Background" Clicked="OnSetBackgroundClicked" HorizontalOptions="FillAndExpand" />
+            <Button Text="Space" Clicked="OnSetBackgroundClicked" HorizontalOptions="FillAndExpand" />
             <Button Text="Capture" Clicked="OnCaptureImageClicked" />
             <Button Text="Pick" Clicked="OnPickImageClicked" HorizontalOptions="FillAndExpand" />
             <Button Text="Clear" Clicked="OnClearImagesClicked" HorizontalOptions="FillAndExpand" />
